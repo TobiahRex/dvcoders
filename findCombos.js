@@ -6,10 +6,13 @@
  */
 const isPrime = n => {
   // n = 3
+  if (n == 2) {
+    return true;
+  }
+
   let result = null;
   if (!!n) {
     for (let i = 2; i < n; i++) {
-      //
       if (i !== n) {
         if (n % i === 0) {
           result = false;
@@ -31,17 +34,18 @@ const partition = (list, split, memo) => {
     return;
   }
 
-  // Generate sums for current lists.
-  let sum = list.reduce((a, b) => a + b, 0);
+  // Generate sum for current lists.
+  let sum = list.reduce((a, b) => a + b);
 
-  // Verify sum of LIST doesn't already exist inside memo.
-  if (!(sum in memo)) {
-    if (isPrime(sum)) {
+  // Verify sum prime and its respective list is the longest saved.
+  if (isPrime(sum)) {
+    if (!(sum in memo)) {
       memo[sum] = list;
+    } else {
+      if (list.length > memo[sum].length) {
+        memo[sum] = list;
+      }
     }
-    // if it does exist and the current list is longer - then replace the sum.
-  } else if (list.length > memo[sum].length) {
-    memo[sum] = list;
   }
   // create new lists based on current split point.
   let loList = list.slice(0, split);
@@ -51,15 +55,16 @@ const partition = (list, split, memo) => {
   if (split !== list.length) {
     partition(loList, split - 1, memo);
     partition(hiList, split + 1, memo);
-  } else {
-    return memo;
   }
 };
 const memo = {};
 
 /*
   {
-    [sum of array]: [array of numbers]
+    [split]: {
+      sum: [array of numbers],
+      sum: [array of numbers],
+    }
   }
 */
 const list = [
@@ -86,12 +91,13 @@ const list = [
   73,
   79,
   83,
-  89,
-  97
+  89
+  // 97
 ];
 for (let i = 0; i < list.length; i++) {
   partition(list, i, memo);
 }
+
 console.log("FINAL memo: \n", memo);
 console.log("Total Combos: ", Object.keys(memo).length);
 // console.log("FINAL memo: \n", JSON.stringify(memo, null, 2));
