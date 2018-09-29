@@ -12,7 +12,7 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
 */
 
 /**
- * Called randomly to verify number is prime.
+ * Called randomly to verify argument is prime.
  *
  * @param {integer}
  * @return {boolean}
@@ -41,7 +41,7 @@ const isPrime = n => {
 
 /**
  * Called randomly.
- * Generates new prime number, based off last prime number found.
+ * Generates new prime number, based off argument as last prime number found.
  *
  * @param {integer}
  * @return {integer}
@@ -61,9 +61,8 @@ const getNextPrime = lastPrime => {
 
 /**
  * Called recursively
- * Recursively iterates over different portions of an dynamically sized list using a "partition" logic.
+ * Recursively iterates over different portions of a dynamically sized list using a "partition" logic.
  * Saves only unique sums into a referenced memo.
- * Once
  *
  * @param {integer, array, integer, object}
  * @return {null}
