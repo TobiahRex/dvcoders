@@ -36,9 +36,9 @@ const partition = (list, split, memo) => {
 
   // Verify sum of LIST doesn't already exist inside memo.
   if (!(sum in memo)) {
-    if (isPrime(sum)) {
-      memo[sum] = list;
-    }
+    // if (isPrime(sum)) {
+    // }
+    memo[sum] = list;
     // if it does exist and the current list is longer - then replace the sum.
   } else if (list.length > memo[sum].length) {
     memo[sum] = list;
