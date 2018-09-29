@@ -55,12 +55,12 @@ const getAnswer = (primeList, limit) => {
     lastList = [],
     currentList = [];
 
-  // console.log("primeList before: ", primeList);
   for (let i = primeList.length - 1; keepLooking; i--) {
     sum -= primeList[i];
     if (sum < limit && isPrime(sum)) {
       keepLooking = false;
-      console.log("Number of primes: ", primeList.slice(0, i));
+      console.log("Number of primes: ", primeList.slice(0, i).length);
+      console.log("Primes: ", primeList.slice(0, i));
     }
   }
   return sum;
