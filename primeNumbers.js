@@ -56,6 +56,7 @@ const getNextPrime = lastPrime => {
 
 /**
  * Verifies that the collection of cached prime numbers, sums to a possible solution
+ * NOTE: Does not generate answer, but simply verifies one exists.
  *
  * @param {integer, integer}
  * @return {boolean}
