@@ -154,10 +154,10 @@ const main = limit => {
 
   return { finalSum, finalList };
 };
-console.time("prime");
+console.time("Run Time: ");
 const limit = 1000000;
 const { finalSum, finalList } = main(limit);
-console.timeEnd("prime");
+console.timeEnd("Run Time: ");
 console.log(
   "limit # ",
   limit,
