@@ -19,10 +19,13 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
  */
 const isPrime = n => {
   // n = 3
+  if (n == 2) {
+    return true;
+  }
+
   let result = null;
   if (!!n) {
     for (let i = 2; i < n; i++) {
-      //
       if (i !== n) {
         if (n % i === 0) {
           result = false;
@@ -71,48 +74,30 @@ const answerExists = (currentSum, limit) => {
   }
 };
 
-/**
- * Locates the combination of primes that when summed, give the largest prime value,
- * less than the "limit" value.
- *
- * @param {array, integer}
- * @return {integer}
- */
-const getAnswer = (primeList, limit) => {
-  let keepLooking = true,
-    sum = primeList.reduce((a, b) => a + b),
-    lastList = [],
-    currentList = [];
-
-  for (let i = primeList.length - 1; keepLooking; i--) {
-    sum -= primeList[i];
-    if (sum < limit && isPrime(sum)) {
-      keepLooking = false;
-      console.log("Number of primes: ", primeList.slice(0, i).length);
-      console.log("Primes: ", primeList.slice(0, i));
-    }
-  }
-  return sum;
-};
-
 const getAnswerForList = (list, split, memo) => {
-  if (split < 0 || list.length < 2) {
+  if (list.length < 2 || split < 0) {
     return;
   }
-  const sum = list.reduce((a, b) => a + b);
+
+  let sum = list.reduce((a, b) => a + b);
+
   if (isPrime(sum)) {
     if (!(sum in memo)) {
-      if (memo[sum].length < list.length) {
+      memo[sum] = list;
+    } else {
+      if (list.length > memo[sum].length) {
         memo[sum] = list;
       }
     }
   }
 
-  const loList = list.splice(0, split),
-    hiList = list.splice(split);
+  let loList = list.slice(0, split);
+  let hiList = list.slice(split);
 
-  getAnswerForList(loList, split - 1, memo);
-  getAnswerForList(hiList, split + 1, memo);
+  if (split !== list.length) {
+    getAnswerForList(loList, split - 1, memo);
+    getAnswerForList(hiList, split + 1, memo);
+  }
 };
 
 /**
@@ -126,13 +111,13 @@ const getAnswerForList = (list, split, memo) => {
  */
 const main = limit => {
   let primes = [2, getNextPrime(2)],
-    lastList = [],
-    lastSum = 0,
-    noAnswer = true,
-    memo = {};
+    answerList = [],
+    answerSum = 0,
+    noAnswer = true;
 
   // while no answer exists
   while (noAnswer) {
+    let memo = {};
     // generate a new prime.
     let newPrime = getNextPrime(primes.slice(0).pop());
     // at new prime to entire list.
@@ -140,22 +125,41 @@ const main = limit => {
 
     for (let i = 0; i < primes.length; i++) {
       getAnswerForList(primes, i, memo);
-      const answerSum = Object.keys(memo).pop();
+      // console.log("memo: ", memo);
+      let largestList = [],
+        largestSum = 0;
 
-      if (
-        answerSum < limit &&
-        answerSum > lastSum &&
-        answerList.length > lastList.length
-      ) {
-        lastList = answerList;
+      Object.keys(memo).forEach(key => {
+        let currentSum = memo[key].reduce((a, b) => a + b),
+          currentList = memo[key];
+
+        if (
+          currentList.length > largestList.length &&
+          currentSum > largestSum
+        ) {
+          largestList = currentList;
+          longestList = currentSum;
+        }
+      });
+
+      const answerList = memo[answerSum.toString()];
+
+      if (answerSum < limit && answerList > longestList) {
         lastSum = answerSum;
+        lastList = answerList;
       } else if (answerSum > limit) {
         noAnswer = false;
+        console.log("memo: ", memo);
       }
     }
   }
-
-  return lastSum;
+  return {
+    sum: lastSum,
+    list: lastList
+  };
 };
 
-console.log(main(1000));
+const { sum, list } = main(100);
+console.log("sum: ", sum);
+console.log("listLength: ", list.length);
+console.log("list: ", list);
