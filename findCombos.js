@@ -24,8 +24,8 @@ const isPrime = n => {
 };
 
 const partition = (list, split, memo) => {
-  console.log("----------------------------------------");
-  console.log("split: ", split);
+  // console.log("----------------------------------------");
+  // console.log("split: ", split);
   // If the current list is too short - return early.
   if (list.length < 2 || split < 0) {
     return;
@@ -36,9 +36,9 @@ const partition = (list, split, memo) => {
 
   // Verify sum of LIST doesn't already exist inside memo.
   if (!(sum in memo)) {
-    // if (isPrime(sum)) {
-    // }
-    memo[sum] = list;
+    if (isPrime(sum)) {
+      memo[sum] = list;
+    }
     // if it does exist and the current list is longer - then replace the sum.
   } else if (list.length > memo[sum].length) {
     memo[sum] = list;
@@ -62,9 +62,36 @@ const memo = {};
     [sum of array]: [array of numbers]
   }
 */
-const list = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43];
+const list = [
+  2,
+  3,
+  5,
+  7,
+  11,
+  13,
+  17,
+  19,
+  23,
+  29,
+  31,
+  37,
+  41,
+  43,
+  47,
+  53,
+  59,
+  61,
+  67,
+  71,
+  73,
+  79,
+  83,
+  89,
+  97
+];
 for (let i = 0; i < list.length; i++) {
   partition(list, i, memo);
 }
 console.log("FINAL memo: \n", memo);
+console.log("Total Combos: ", Object.keys(memo).length);
 // console.log("FINAL memo: \n", JSON.stringify(memo, null, 2));
