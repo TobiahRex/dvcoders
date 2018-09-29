@@ -91,8 +91,8 @@ const list = [
   73,
   79,
   83,
-  89
-  // 97
+  89,
+  97
 ];
 for (let i = 0; i < list.length; i++) {
   partition(list, i, memo);

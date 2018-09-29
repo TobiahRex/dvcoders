@@ -95,6 +95,10 @@ const getAnswer = (primeList, limit) => {
   return sum;
 };
 
+const getAnswerForList = (primeList, split, memo) {
+  if (split )
+}
+
 /**
  * Begins control flow.
  * 1) Generates list of prime numbers until a possible solution exists.
@@ -106,27 +110,32 @@ const getAnswer = (primeList, limit) => {
  */
 const main = limit => {
   let primes = [2, getNextPrime(2)],
-    currentSum = primes.reduce((a, b) => a + b),
-    noAnswer = true;
+    lastList = [],
+    lastSum = 0,
+    noAnswer = true,
+    memo = {};
 
+  // while no answer exists
   while (noAnswer) {
     // generate a new prime.
     let newPrime = getNextPrime(primes.slice(0).pop());
-    // cache new prime.
+    // at new prime to entire list.
     primes.push(newPrime);
-    // add to total sum.
-    currentSum += newPrime;
 
-    // verify total sum is prime.
-    if (isPrime(currentSum)) {
-      // if yes, stop generating new priems.
-      if (answerExists(currentSum, limit)) {
-        noAnswer = false;
+    for (let i = 0; i < primes.length; i++) {
+      const { answerList, answerSum } = getAnswerForList(primes, i, memo);
+      if (
+        answerSum < limit &&
+        answerSum > lastSum &&
+        answerList.length > lastList.length &&
+      ) {
+        lastList = answerList;
+        lastSum = answerSum;
       }
     }
   }
 
-  return getAnswer(primes, limit); // find and return answer.
+  return lastSum;
 };
 
 console.log(main(1000));
