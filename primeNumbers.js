@@ -163,6 +163,6 @@ console.log(
   limit,
   "\nfinalSum: ",
   finalSum,
-  "\nfinal List: ",
-  finalList
+  "\nfinal List Length: ",
+  finalList.length
 );
