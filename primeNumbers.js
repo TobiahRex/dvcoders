@@ -108,18 +108,23 @@ const main = limit => {
     noAnswer = true;
 
   while (noAnswer) {
+    // generate a new prime.
     let newPrime = getNextPrime(primes.slice(0).pop());
+    // cache new prime.
     primes.push(newPrime);
+    // add to total sum.
     currentSum += newPrime;
 
+    // verify total sum is prime.
     if (isPrime(currentSum)) {
+      // if yes, stop generating new priems.
       if (answerExists(currentSum, limit)) {
         noAnswer = false;
       }
     }
   }
 
-  return getAnswer(primes, limit);
+  return getAnswer(primes, limit); // find and return answer.
 };
 
 console.log(main(1000));
