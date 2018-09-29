@@ -74,12 +74,12 @@ const answerExists = (currentSum, limit) => {
   }
 };
 
-const getAnswerForList = (limit, list, begin, end, memo) => {
-  if (list.length < 2 || begin < 0 || end > list.length - 1) {
+const getAnswerForList = (limit, list, split, memo) => {
+  if (list.length < 2 || split < 0) {
     return;
   }
 
-  let sum = list.slice(begin, end).reduce((a, b) => a + b);
+  let sum = list.reduce((a, b) => a + b);
 
   if (isPrime(sum) && sum < limit) {
     if (!(sum in memo)) {
@@ -121,36 +121,41 @@ const main = limit => {
     let newPrime = getNextPrime(primes.slice(0).pop());
     primes.push(newPrime);
   }
+  primes.pop(); // remove last prime since the total sum is greater than the limit.
 
-  getAnswerForList(limit, primes, 0, primes.length, memo);
-  console.log("memo: ", memo);
+  for (let i = 0; i < primes.length; i++) {
+    getAnswerForList(limit, primes, i, memo);
 
-  // find longest list in the current memo;
-  let answerList = [],
-    answerSum = 0,
-    largestNetSum = 0;
+    // find longest list in the current memo;
+    let answerList = [],
+      answerSum = 0,
+      largestNetSum = 0;
 
-  if (Object.keys(memo).length) {
-    Object.keys(memo).forEach(key => {
-      let currentSum = memo[key].reduce((a, b) => a + b),
-        currentList = memo[key];
+    if (Object.keys(memo).length) {
+      Object.keys(memo).forEach(key => {
+        let currentSum = memo[key].reduce((a, b) => a + b),
+          currentList = memo[key];
 
-      if (currentList.length > answerList.length) {
-        answerList = currentList;
-        answerSum = currentSum;
-      }
+        if (currentList.length > answerList.length) {
+          answerList = currentList;
+          answerSum = currentSum;
+        }
 
-      if (currentSum > largestNetSum) {
-        largestNetSum = currentSum;
-      }
-    });
+        if (currentSum > largestNetSum) {
+          largestNetSum = currentSum;
+        }
+      });
 
-    // check the current longest list with the final list.
-    finalList = answerList;
-    finalSum = answerSum;
+      // check the current longest list with the final list.
+      finalList = answerList;
+      finalSum = answerSum;
+    }
   }
 
   return { finalSum, finalList };
 };
-
-console.log(main(1000));
+console.time("prime");
+const limit = 1000000;
+const { finalSum, finalList } = main(limit);
+console.timeEnd("prime");
+console.log("limit # ", limit, "\nfinalSum: ", finalSum);
