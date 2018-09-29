@@ -158,4 +158,11 @@ console.time("prime");
 const limit = 1000000;
 const { finalSum, finalList } = main(limit);
 console.timeEnd("prime");
-console.log("limit # ", limit, "\nfinalSum: ", finalSum);
+console.log(
+  "limit # ",
+  limit,
+  "\nfinalSum: ",
+  finalSum,
+  "\nfinal List: ",
+  finalList
+);
