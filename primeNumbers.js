@@ -161,7 +161,7 @@ console.timeEnd("prime");
 console.log(
   "limit # ",
   limit,
-  "\nfinalSum: ",
+  "\nfinal Sum: ",
   finalSum,
   "\nfinal List Length: ",
   finalList.length
