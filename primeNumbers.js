@@ -74,14 +74,14 @@ const answerExists = (currentSum, limit) => {
   }
 };
 
-const getAnswerForList = (list, split, memo) => {
-  if (list.length < 2 || split < 0) {
+const getAnswerForList = (limit, list, begin, end, memo) => {
+  if (list.length < 2 || begin < 0 || end > list.length - 1) {
     return;
   }
 
-  let sum = list.reduce((a, b) => a + b);
+  let sum = list.slice(begin, end).reduce((a, b) => a + b);
 
-  if (isPrime(sum)) {
+  if (isPrime(sum) && sum < limit) {
     if (!(sum in memo)) {
       memo[sum] = list;
     } else {
@@ -91,12 +91,12 @@ const getAnswerForList = (list, split, memo) => {
     }
   }
 
-  let loList = list.slice(0, split);
-  let hiList = list.slice(split);
+  let loList = list.slice(0, split - 1);
+  let hiList = list.slice(split + 1);
 
   if (split !== list.length) {
-    getAnswerForList(loList, split - 1, memo);
-    getAnswerForList(hiList, split + 1, memo);
+    getAnswerForList(limit, loList, split - 1, memo);
+    getAnswerForList(limit, hiList, split + 1, memo);
   }
 };
 
@@ -110,56 +110,47 @@ const getAnswerForList = (list, split, memo) => {
  * @return {integer}
  */
 const main = limit => {
-  let primes = [2, getNextPrime(2)],
-    answerList = [],
-    answerSum = 0,
-    noAnswer = true;
-
+  let primes = [2, 3],
+    noAnswer = true,
+    finalSum = 0,
+    finalList = [],
+    memo = {};
   // while no answer exists
-  while (noAnswer) {
-    let memo = {};
-    // generate a new prime.
+
+  while (primes.reduce((a, b) => a + b) < limit) {
     let newPrime = getNextPrime(primes.slice(0).pop());
-    // at new prime to entire list.
     primes.push(newPrime);
-
-    for (let i = 0; i < primes.length; i++) {
-      getAnswerForList(primes, i, memo);
-      // console.log("memo: ", memo);
-      let largestList = [],
-        largestSum = 0;
-
-      Object.keys(memo).forEach(key => {
-        let currentSum = memo[key].reduce((a, b) => a + b),
-          currentList = memo[key];
-
-        if (
-          currentList.length > largestList.length &&
-          currentSum > largestSum
-        ) {
-          largestList = currentList;
-          longestList = currentSum;
-        }
-      });
-
-      const answerList = memo[answerSum.toString()];
-
-      if (answerSum < limit && answerList > longestList) {
-        lastSum = answerSum;
-        lastList = answerList;
-      } else if (answerSum > limit) {
-        noAnswer = false;
-        console.log("memo: ", memo);
-      }
-    }
   }
-  return {
-    sum: lastSum,
-    list: lastList
-  };
+
+  getAnswerForList(limit, primes, 0, primes.length, memo);
+  console.log("memo: ", memo);
+
+  // find longest list in the current memo;
+  let answerList = [],
+    answerSum = 0,
+    largestNetSum = 0;
+
+  if (Object.keys(memo).length) {
+    Object.keys(memo).forEach(key => {
+      let currentSum = memo[key].reduce((a, b) => a + b),
+        currentList = memo[key];
+
+      if (currentList.length > answerList.length) {
+        answerList = currentList;
+        answerSum = currentSum;
+      }
+
+      if (currentSum > largestNetSum) {
+        largestNetSum = currentSum;
+      }
+    });
+
+    // check the current longest list with the final list.
+    finalList = answerList;
+    finalSum = answerSum;
+  }
+
+  return { finalSum, finalList };
 };
 
-const { sum, list } = main(100);
-console.log("sum: ", sum);
-console.log("listLength: ", list.length);
-console.log("list: ", list);
+console.log(main(1000));

@@ -26,7 +26,7 @@ const isPrime = n => {
   return result;
 };
 
-const partition = (list, split, memo) => {
+const partition = (limit, list, split, memo) => {
   // console.log("----------------------------------------");
   // console.log("split: ", split);
   // If the current list is too short - return early.
@@ -38,7 +38,7 @@ const partition = (list, split, memo) => {
   let sum = list.reduce((a, b) => a + b);
 
   // Verify sum prime and its respective list is the longest saved.
-  if (isPrime(sum)) {
+  if (isPrime(sum) && sum < limit) {
     if (!(sum in memo)) {
       memo[sum] = list;
     } else {
@@ -48,13 +48,13 @@ const partition = (list, split, memo) => {
     }
   }
   // create new lists based on current split point.
-  let loList = list.slice(0, split);
-  let hiList = list.slice(split);
+  let loList = list.slice(0, split - 1);
+  let hiList = list.slice(split + 1);
 
   // recursively call with new lists and new split points.
   if (split !== list.length) {
-    partition(loList, split - 1, memo);
-    partition(hiList, split + 1, memo);
+    partition(limit, loList, split - 1, memo);
+    partition(limit, hiList, split + 1, memo);
   }
 };
 const memo = {};
@@ -95,7 +95,7 @@ const list = [
   97
 ];
 for (let i = 0; i < list.length; i++) {
-  partition(list, i, memo);
+  partition(1000, list, i, memo);
 }
 
 console.log("FINAL memo: \n", memo);
