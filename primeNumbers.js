@@ -60,20 +60,14 @@ const getNextPrime = lastPrime => {
 };
 
 /**
- * Verifies that the collection of cached prime numbers, sums to a possible solution
- * NOTE: Does not generate answer, but simply verifies one exists.
+ * Called recursively
+ * Recursively iterates over different portions of an dynamically sized list using a "partition" logic.
+ * Saves only unique sums into a referenced memo.
+ * Once
  *
- * @param {integer, integer}
- * @return {boolean}
+ * @param {integer, array, integer, object}
+ * @return {null}
  */
-const answerExists = (currentSum, limit) => {
-  if (currentSum < limit) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
 const getAnswerForList = (limit, list, split, memo) => {
   if (list.length < 2 || split < 0) {
     return;
@@ -115,49 +109,39 @@ const main = limit => {
     finalSum = 0,
     finalList = [],
     memo = {};
-  // while no answer exists
 
   while (primes.reduce((a, b) => a + b) < limit) {
     let newPrime = getNextPrime(primes.slice(0).pop());
     primes.push(newPrime);
   }
-  primes.pop(); // remove last prime since the total sum is greater than the limit.
+
+  // remove the last prime since the total sum would be greater than the limit.
+  primes.pop();
 
   for (let i = 0; i < primes.length; i++) {
     getAnswerForList(limit, primes, i, memo);
 
-    // find longest list in the current memo;
-    let answerList = [],
-      answerSum = 0,
-      largestNetSum = 0;
+    // find longest list in the memo;
 
     if (Object.keys(memo).length) {
       Object.keys(memo).forEach(key => {
         let currentSum = memo[key].reduce((a, b) => a + b),
           currentList = memo[key];
 
-        if (currentList.length > answerList.length) {
-          answerList = currentList;
-          answerSum = currentSum;
-        }
-
-        if (currentSum > largestNetSum) {
-          largestNetSum = currentSum;
+        if (currentList.length > finalList.length) {
+          finalList = currentList;
+          finalSum = currentSum;
         }
       });
-
-      // check the current longest list with the final list.
-      finalList = answerList;
-      finalSum = answerSum;
     }
   }
 
   return { finalSum, finalList };
 };
-console.time("Run Time: ");
+console.time("Run Time");
 const limit = 1000000;
 const { finalSum, finalList } = main(limit);
-console.timeEnd("Run Time: ");
+console.timeEnd("Run Time");
 console.log(
   "limit # ",
   limit,
