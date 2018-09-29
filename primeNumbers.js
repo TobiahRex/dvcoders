@@ -9,6 +9,12 @@ The longest sum of consecutive primes below one-thousand that adds to a prime, c
 Which prime, below one-million, can be written as the sum of the most consecutive primes?
 */
 
+/**
+ * Called randomly to verify number is prime.
+ *
+ * @param {integer}
+ * @return {boolean}
+ */
 const isPrime = n => {
   // n = 3
   let result = null;
@@ -28,6 +34,13 @@ const isPrime = n => {
   return result;
 };
 
+/**
+ * Called randomly.
+ * Generates new prime number, based off last prime number found.
+ *
+ * @param {integer}
+ * @return {integer}
+ */
 const getNextPrime = lastPrime => {
   let newPrime = 0;
   let keepLooking = true;
@@ -41,6 +54,12 @@ const getNextPrime = lastPrime => {
   return newPrime;
 };
 
+/**
+ * Verifies that the collection of cached prime numbers, sums to a possible solution
+ *
+ * @param {integer, integer}
+ * @return {boolean}
+ */
 const answerExists = (currentSum, limit) => {
   if (currentSum < limit) {
     return false;
@@ -49,6 +68,13 @@ const answerExists = (currentSum, limit) => {
   }
 };
 
+/**
+ * Locates the combination of primes that when summed, give the largest prime value,
+ * less than the "limit" value.
+ *
+ * @param {array, integer}
+ * @return {integer}
+ */
 const getAnswer = (primeList, limit) => {
   let keepLooking = true,
     sum = primeList.reduce((a, b) => a + b),
@@ -66,6 +92,15 @@ const getAnswer = (primeList, limit) => {
   return sum;
 };
 
+/**
+ * Begins control flow.
+ * 1) Generates list of prime numbers until a possible solution exists.
+ * 2) Finds solution from generated list.
+ * 3) Returns final answer.
+ *
+ * @param {integer}
+ * @return {integer}
+ */
 const main = limit => {
   let primes = [2, getNextPrime(2)],
     currentSum = primes.reduce((a, b) => a + b),
