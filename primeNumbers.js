@@ -110,6 +110,7 @@ const main = limit => {
     finalList = [],
     memo = {};
 
+  // generate all possible primes with respect to the limit
   while (primes.reduce((a, b) => a + b) < limit) {
     let newPrime = getNextPrime(primes.slice(0).pop());
     primes.push(newPrime);
@@ -122,7 +123,6 @@ const main = limit => {
     getAnswerForList(limit, primes, i, memo);
 
     // find longest list in the memo;
-
     if (Object.keys(memo).length) {
       Object.keys(memo).forEach(key => {
         let currentSum = memo[key].reduce((a, b) => a + b),
