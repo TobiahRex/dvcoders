@@ -95,9 +95,25 @@ const getAnswer = (primeList, limit) => {
   return sum;
 };
 
-const getAnswerForList = (primeList, split, memo) {
-  if (split )
-}
+const getAnswerForList = (list, split, memo) => {
+  if (split < 0 || list.length < 2) {
+    return;
+  }
+  const sum = list.reduce((a, b) => a + b);
+  if (isPrime(sum)) {
+    if (!(sum in memo)) {
+      if (memo[sum].length < list.length) {
+        memo[sum] = list;
+      }
+    }
+  }
+
+  const loList = list.splice(0, split),
+    hiList = list.splice(split);
+
+  getAnswerForList(loList, split - 1, memo);
+  getAnswerForList(hiList, split + 1, memo);
+};
 
 /**
  * Begins control flow.
@@ -123,14 +139,18 @@ const main = limit => {
     primes.push(newPrime);
 
     for (let i = 0; i < primes.length; i++) {
-      const { answerList, answerSum } = getAnswerForList(primes, i, memo);
+      getAnswerForList(primes, i, memo);
+      const answerSum = Object.keys(memo).pop();
+
       if (
         answerSum < limit &&
         answerSum > lastSum &&
-        answerList.length > lastList.length &&
+        answerList.length > lastList.length
       ) {
         lastList = answerList;
         lastSum = answerSum;
+      } else if (answerSum > limit) {
+        noAnswer = false;
       }
     }
   }
