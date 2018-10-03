@@ -17,27 +17,71 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
  * @param {integer}
  * @return {boolean}
  */
-const isPrime = n => {
-  // n = 3
-  if (n == 2) {
-    return true;
-  }
+// const isPrime = n => {
+//   // n = 3
+//   if (n == 2) {
+//     return true;
+//   }
+//
+//   let result = null;
+//   if (!!n) {
+//     for (let i = 2; i < n; i++) {
+//       if (i !== n) {
+//         if (n % i === 0) {
+//           result = false;
+//           break;
+//         } else {
+//           result = true;
+//         }
+//       }
+//     }
+//   }
+//   return result;
+// };
+const primeMemo = {};
+const notPrime = {};
+console.time("Run Time");
+const limit = 1000000;
+const { finalSum, finalList } = main(limit);
+console.timeEnd("Run Time");
+console.log(
+  "limit # ",
+  limit,
+  "\nfinal Sum: ",
+  finalSum,
+  "\nfinal List Length: ",
+  finalList.length
+);
+
+while (finalList.length) {
+  console.log(finalList.splice(0, 10));
+}
+
+function isPrime(n) {
+  if (n in primeMemo) return true;
+  if (n in notPrime || n > limit) return false;
 
   let result = null;
-  if (!!n) {
-    for (let i = 2; i < n; i++) {
-      if (i !== n) {
-        if (n % i === 0) {
-          result = false;
-          break;
-        } else {
-          result = true;
-        }
-      }
+
+  for (let prime in primeMemo) {
+    if (prime < n && n % Number(prime) === 0) {
+      result = false;
+    }
+  }
+  if (result == false) return false;
+
+  for (let i = 2; i < n; i++) {
+    if (n % i === 0) {
+      result = false;
+      notPrime[n] = true;
+      break;
+    } else {
+      primeMemo[n] = true;
+      result = true;
     }
   }
   return result;
-};
+}
 
 /**
  * Called randomly.
@@ -46,7 +90,7 @@ const isPrime = n => {
  * @param {integer}
  * @return {integer}
  */
-const getNextPrime = lastPrime => {
+function getNextPrime(lastPrime) {
   let newPrime = 0;
   let keepLooking = true;
 
@@ -57,7 +101,7 @@ const getNextPrime = lastPrime => {
     }
   }
   return newPrime;
-};
+}
 
 /**
  * Called recursively
@@ -67,7 +111,7 @@ const getNextPrime = lastPrime => {
  * @param {integer, array, integer, object}
  * @return {null}
  */
-const getAnswerForList = (limit, list, split, memo) => {
+function getAnswerForList(limit, list, split, memo) {
   if (list.length < 2 || split < 0) {
     return;
   }
@@ -84,14 +128,13 @@ const getAnswerForList = (limit, list, split, memo) => {
     }
   }
 
-  let loList = list.slice(0, split - 1);
-  let hiList = list.slice(split + 1);
-
   if (split !== list.length) {
+    let loList = list.slice(0, split - 1);
+    let hiList = list.slice(split + 1);
     getAnswerForList(limit, loList, split - 1, memo);
     getAnswerForList(limit, hiList, split + 1, memo);
   }
-};
+}
 
 /**
  * Begins control flow.
@@ -102,7 +145,7 @@ const getAnswerForList = (limit, list, split, memo) => {
  * @param {integer}
  * @return {integer}
  */
-const main = limit => {
+function main(limit) {
   let primes = [2, 3],
     noAnswer = true,
     finalSum = 0,
@@ -112,44 +155,31 @@ const main = limit => {
   // generate all possible primes with respect to the limit
   console.time("getPrimes");
   while (primes.reduce((a, b) => a + b) < limit) {
-    let newPrime = getNextPrime(primes.slice(0).pop());
+    let lastPrime = primes[primes.length - 1],
+      newPrime = getNextPrime(lastPrime);
     primes.push(newPrime);
   }
   console.timeEnd("getPrimes");
-
   // remove the last prime since the total sum would be greater than the limit.
   primes.pop();
-
+  // console.log("primes: ", primes);
   console.time("getAnswer");
   for (let i = 0; i < primes.length; i++) {
     getAnswerForList(limit, primes, i, memo);
+    // console.log("memo: ", memo);
 
     // find longest list in the memo;
-    if (Object.keys(memo).length) {
-      Object.keys(memo).forEach(key => {
-        let currentSum = memo[key].reduce((a, b) => a + b),
-          currentList = memo[key];
+    Object.keys(memo).forEach(key => {
+      let currentSum = Number(key),
+        currentList = memo[key];
 
-        if (currentList.length > finalList.length) {
-          finalList = currentList;
-          finalSum = currentSum;
-        }
-      });
-    }
+      if (currentList.length > finalList.length) {
+        finalList = currentList;
+        finalSum = currentSum;
+      }
+    });
   }
   console.timeEnd("getAnswer");
 
   return { finalSum, finalList };
-};
-console.time("Run Time");
-const limit = 1000000;
-const { finalSum, finalList } = main(limit);
-console.timeEnd("Run Time");
-console.log(
-  "limit # ",
-  limit,
-  "\nfinal Sum: ",
-  finalSum,
-  "\nfinal List Length: ",
-  finalList.length
-);
+}

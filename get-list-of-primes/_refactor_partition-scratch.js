@@ -27,22 +27,30 @@ const isPrime = n => {
 };
 
 const partition = (limit, list, begin, end, memo) => {
+  if (`${begin}${end - 1}` in memo) {
+    return;
+  } else if (`${begin + 1}${end}` in memo) {
+    return;
+  }
   // console.log("----------------------------------------");
-  // console.log("split: ", split);
 
   // create new list for this invocation.
   let newList = list.slice(begin, end);
-  let sum = newList.reduce((a, b) => a + b);
   // If the current list is too short - return early.
-
-  if (newList.length < 2 || sum in memo) {
+  if (newList.length < 2) {
     return;
   }
 
-  // Generate sum for current lists.
-
-  // Verify sum is prime and its respective list is the longest saved.
-  if (sum < limit) {
+  let sum = newList.reduce((a, b) => a + b);
+  if (sum in memo) {
+    return;
+  } else if (sum > limit) {
+    return;
+  } else if (!isPrime(sum)) {
+    partition(limit, list, begin, end - 1, memo);
+    partition(limit, list, begin + 1, end, memo);
+    return;
+  } else {
     if (!(sum in memo)) {
       memo[sum] = newList;
     } else {
@@ -50,11 +58,13 @@ const partition = (limit, list, begin, end, memo) => {
         memo[sum] = newList;
       }
     }
-  }
-  // recursively call with new lists and new split points.
 
-  partition(limit, list, begin, end - 1, memo);
-  partition(limit, list, begin + 1, end, memo);
+    // recursively call with new lists and new split points.
+    partition(limit, list, begin, end - 1, memo);
+    partition(limit, list, begin + 1, end, memo);
+    memo[`${begin}${end - 1}`] = sum;
+    memo[`${begin + 1}${end}`] = sum;
+  }
 };
 const memo = {};
 
@@ -97,6 +107,6 @@ for (let i = 0; i < list.length; i++) {
   partition(1000, list, 0, list.length, memo);
 }
 
-// console.log("FINAL memo: \n", memo);
+console.log("FINAL memo: \n", memo);
 console.log("Total Combos: ", Object.keys(memo).length);
 // console.log("FINAL memo: \n", JSON.stringify(memo, null, 2));
