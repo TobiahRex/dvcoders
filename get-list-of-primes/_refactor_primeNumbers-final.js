@@ -17,31 +17,10 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
  * @param {integer}
  * @return {boolean}
  */
-// const isPrime = n => {
-//   // n = 3
-//   if (n == 2) {
-//     return true;
-//   }
-//
-//   let result = null;
-//   if (!!n) {
-//     for (let i = 2; i < n; i++) {
-//       if (i !== n) {
-//         if (n % i === 0) {
-//           result = false;
-//           break;
-//         } else {
-//           result = true;
-//         }
-//       }
-//     }
-//   }
-//   return result;
-// };
 const primeMemo = {};
 const notPrime = {};
 console.time("Run Time");
-const limit = 1000000;
+const limit = 10;
 const { finalSum, finalList } = main(limit);
 console.timeEnd("Run Time");
 console.log(
@@ -52,10 +31,6 @@ console.log(
   "\nfinal List Length: ",
   finalList.length
 );
-
-while (finalList.length) {
-  console.log(finalList.splice(0, 10));
-}
 
 function isPrime(n) {
   if (n in primeMemo) return true;
