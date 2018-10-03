@@ -19,9 +19,9 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
  */
 const primeMemo = {};
 const notPrime = {};
-// const pairs = {};
+const pairs = {};
 console.time("Run Time");
-const limit = 10000;
+const limit = 1000000;
 const { finalSum, finalList } = main(limit);
 console.timeEnd("Run Time");
 console.log(
@@ -93,39 +93,37 @@ function getNextPrime(lastPrime) {
  * @param {integer, array, integer, object}
  * @return {null}
  */
-function getAnswerForList(limit, list, begin, end, memo) {
-  if (begin > list.length || end < 1) return;
+function getAnswerForList(limit, list, split, memo) {
+  if (list.length < 2 || split < 0) {
+    return;
+  }
 
-  // if (`${left}-${end}` in pairs) return;
-  // if (`${begin}-${right}` in pairs) return;
-
-  let newList = list.slice(begin, end);
-  // if (begin < end) {
-  //   newList = list.slice(begin, end);
-  // } else {
-  //   newList = list.slice(end, begin);
-  // }
-  if (newList.length < 2) return;
-
-  let sum = newList.reduce((a, b) => a + b, 0);
+  let sum = list.reduce((a, b) => a + b);
 
   if (isPrime(sum) && sum < limit) {
     if (!(sum in memo)) {
-      memo[sum] = newList;
+      memo[sum] = list;
     } else {
-      if (newList.length > memo[sum].length) {
-        memo[sum] = newList;
+      if (list.length > memo[sum].length) {
+        memo[sum] = list;
       }
     }
   }
 
-  // let left = begin + 1;
-  // pairs[`${begin}-${end}`] = newList;
-  getAnswerForList(limit, list, begin + 1, end, memo);
+  if (split !== list.length) {
+    let loList = list.slice(0, split - 1),
+      hiList = list.slice(split + 1);
 
-  // let right = end - 1;
-  // pairs[`${begin}-${end}`] = newList;
-  getAnswerForList(limit, list, begin, end - 1, memo);
+    if (loList.length) {
+      // pairs[`${0}|${split - 1}`] = loList;
+      getAnswerForList(limit, loList, split - 1, memo);
+    }
+
+    if (hiList.length) {
+      // pairs[`${split + 1}|${hiList.length - 1}`] = hiList;
+      getAnswerForList(limit, hiList, split + 1, memo);
+    }
+  }
 }
 
 /**
@@ -155,28 +153,24 @@ function main(limit) {
   }
   console.timeEnd("getPrimes");
   // remove the last prime since the total sum would be greater than the limit.
-  primes.pop();
+  // primes.pop();
   // console.log("primes: ", primes);
   console.time("getAnswer");
-  // console.log("primes: ", primes);
-  getAnswerForList(limit, primes, 0, primes.length, memo);
-  // console.log("memo: ", memo);
+  for (let i = 0; i < primes.length; i++) {
+    getAnswerForList(limit, primes, i, memo);
+    // console.log("memo: ", memo);
 
-  // find longest list in the memo;
-  Object.keys(memo).forEach(key => {
-    let currentSum = Number(key),
-      currentList = memo[key];
-    if (currentList.length === finalList.length) {
-      if (currentSum > finalSum) {
+    // find longest list in the memo;
+    Object.keys(memo).forEach(key => {
+      let currentSum = Number(key),
+        currentList = memo[key];
+
+      if (currentList.length > finalList.length) {
         finalList = currentList;
         finalSum = currentSum;
       }
-    } else if (currentList.length > finalList.length) {
-      finalList = currentList;
-      finalSum = currentSum;
-    }
-  });
-
+    });
+  }
   console.timeEnd("getAnswer");
 
   return { finalSum, finalList };
